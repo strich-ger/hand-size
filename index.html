@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>手の大きさ比較ツール</title>
-    <style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✋手の大きさ比較ツール</title>
+
+    <meta property="og:title" content="手の大きさ比較ツール">
+    <meta property="og:description" content="性別と身長から手の大きさを推測して比較！二人のサイズ差を視覚的に確認できるツールです。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/hand-size-compare"> <meta property="og:image" content="https://example.com/ogp-image.png"> <meta property="og:site_name" content="手の大きさ比較ツール">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="✋手の大きさ比較ツール">
+    <meta name="twitter:description" content="性別と身長から手の大きさを推測して比較！二人のサイズ差を視覚的に確認できるツールです。">
+    <meta name="twitter:image" content="https://example.com/ogp-image.png"> <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; text-align: center; background: #fdf6e3; padding: 10px; color: #333; margin: 0; }
         .container { max-width: 700px; margin: 20px auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
         h1 { font-size: 1.5rem; margin-bottom: 10px; color: #444; }
@@ -42,7 +51,6 @@
 
         .label-tag { 
             position: absolute;
-            /* 下（手首）からの距離をJSで制御するため、bottom基準にする */
             bottom: 0;
             font-size: 14px; 
             font-weight: bold; 
@@ -69,6 +77,7 @@
 
         .share-area { margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 20px; }
         .btn-share { background: #000; color: #fff; border: none; padding: 10px 24px; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .btn-share:hover { background: #333; }
         .license-text { margin-top: 25px; font-size: 10px; color: #aaa; line-height: 1.6; }
     </style>
 </head>
@@ -77,8 +86,8 @@
 <div class="container">
     <h1>✋手の大きさ比較ツール</h1> 
     <p class="description">
-       性別と身長から手の大きさを推測できます。<br>
-       実際の数値を入力して比較することもできます。<br>
+        性別と身長から手の大きさを推測できます。<br>
+        実際の数値を入力して比較することもできます。<br>
         <small>※初期値は各性別の平均値です。<br>
             個人差があるため、数値はあくまで目安としてお楽しみください。<br>
             （出典：産総研人体寸法データベース等を参考にした推測値）</small>
@@ -147,6 +156,7 @@
         const h = parseFloat(document.getElementById('height' + target).value);
         const gender = document.getElementById('gender' + target).value;
         if (!h) return;
+        // 平均的な手首から中指先までの長さの算出式
         let result = (gender === 'male') ? (h * 0.096 + 2.0).toFixed(1) : (h * 0.088 + 2.7).toFixed(1);
         document.getElementById('hand' + target).value = result;
         update(); 
@@ -178,7 +188,7 @@
         document.getElementById('shapeA').setAttribute('fill', document.getElementById('colorA').value);
         document.getElementById('shapeB').setAttribute('fill', document.getElementById('colorB').value);
 
-        const baseSize = 20; // 基準となる手の長さ
+        const baseSize = 20; // 基準とする手の長さ（計算用）
         const scaleA = handA / baseSize;
         const scaleB = handB / baseSize;
 
@@ -186,14 +196,13 @@
         document.getElementById('svgContainerA').style.transform = `scale(${scaleA})`;
         document.getElementById('svgContainerB').style.transform = `scale(${scaleB})`;
 
-        // ラベル位置調整（手首から指先までのピクセル数に合わせる）
-        // SVGの元の高さ300pxにスケールを掛け、さらに少し余白(10px)を足す
+        // ラベル位置調整
         const labelPosA = (300 * scaleA) + 10;
         const labelPosB = (300 * scaleB) + 10;
         document.getElementById('labelA').style.bottom = `${labelPosA}px`;
         document.getElementById('labelB').style.bottom = `${labelPosB}px`;
 
-        // 全体のズーム調整（枠からはみ出さないように）
+        // 全体のズーム調整（極端に大きい時に画面内に収める）
         const maxHand = Math.max(handA, handB);
         const zoomThreshold = 22; 
         let zoomScale = 1;
@@ -211,7 +220,7 @@
         const handB = document.getElementById('handB').value;
         const text = encodeURIComponent(`${nameA}(${handA}cm)と${nameB}(${handB}cm)の手の大きさを比較しました！\n#手の大きさ比較ツール\n`);
         const url = encodeURIComponent(window.location.href);
-        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        window.open(`https://x.com/intent/tweet?text=${text}&url=${url}`, '_blank');
     }
 
     window.onload = update;
